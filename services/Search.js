@@ -7,7 +7,7 @@ const SearchMovie = async (page, keyword) => {
   const maxPage = await Lastpage(
     `?s=${keyword}&post_type%5B%5D=post&post_type%5B%5D=tv`
   );
-  if (page > maxPage && maxPage) {
+  if (Number(page) > Number(maxPage) && maxPage) {
     return {
       message: `Page Tidak Boleh Lebih Dari ${maxPage}`,
       status: 400,
