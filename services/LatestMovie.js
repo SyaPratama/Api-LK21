@@ -1,19 +1,18 @@
 import { Movie } from "./EndPoint.js";
 import * as cherrio from "cheerio";
-import { Lastpage } from "./Pagination.js";
+import Lastpage  from "./Pagination.js";
 
-const LatestMovie = async function (res,page) {
-  const MaxPage = await Lastpage();
+const LatestMovie = async function (page) {
+  const MaxPage = await Lastpage('/');
   if(page > MaxPage) {
-    res.status(400);
-    return res.json({
+    return {
       message: `Page Tidak Boleh Lebih Dari ${MaxPage}`,
       status: 400
-    });
+    };
   };
 
   const ContentPage = await Movie.getUrl(`/page/${page}`);
-  const $ = cherrio.loadBuffer(ContentPage.data,{
+  const $ = cherrio.load(ContentPage.data,{
     encoding:'utf-8'
   });
   const movieArray = [];
@@ -31,12 +30,13 @@ const LatestMovie = async function (res,page) {
       });
   });
 
-  res.status(200);
-  res.json({
+  return {
     message: 'Berhasil Mendapatkan Data Film',
     status: 200,
+    currentPage: Number(page),
+    maxPage: Number(MaxPage),
     data: movieArray
-  })
+  };
 };
 
 export { LatestMovie };
